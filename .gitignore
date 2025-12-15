@@ -1,0 +1,15 @@
+﻿# Exclude everything by default
+*
+
+# Include only specific files/folders
+!.gitignore
+!basic_de_experiments.py
+!README.md
+!courbes.py
+!fonctionnel.py
+!resultsss/
+!site heuritsic/
+
+# Unignore contents of included folders if needed
+!resultsss/**
+!site heuritsic/**

@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Optimization Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1>🎯 OptiDash</h1>
+            </div>
+
+            <div class="config-section">
+                <h2>Problem Setup</h2>
+                <div class="form-group">
+                    <label>Function</label>
+                    <select id="functionSelect"></select>
+                </div>
+                <div class="form-group">
+                    <label>Dimension</label>
+                    <input type="number" id="dimension" value="30" min="2" max="100">
+                </div>
+                <div class="form-group">
+                    <label>Max FES</label>
+                    <input type="number" id="maxFes" value="30000" step="1000">
+                </div>
+                <div class="form-group">
+                    <label>Bounds</label>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <input type="number" id="lb" value="-100" placeholder="LB">
+                        <input type="number" id="ub" value="100" placeholder="UB">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Random Seed</label>
+                    <input type="number" id="seed" value="42">
+                </div>
+            </div>
+
+            <div class="config-section">
+                <h2>Algorithms</h2>
+                <div class="algo-checkboxes">
+                    <!-- DE -->
+                    <div class="algo-item">
+                        <label class="checkbox-label">
+                            <input type="checkbox" class="algo-check" value="DE" checked> DE
+                        </label>
+                        <div class="algo-params" id="params-DE">
+                            <div class="algo-params-header" onclick="toggleParams('DE')">Parameters ▾</div>
+                            <div class="algo-params-content">
+                                <div class="form-group"><label>Pop Size</label><input type="number" data-algo="DE"
+                                        data-param="pop_size" value="30"></div>
+                                <div class="form-group"><label>F</label><input type="number" step="0.1" data-algo="DE"
+                                        data-param="F" value="0.5"></div>
+                                <div class="form-group"><label>CR</label><input type="number" step="0.1" data-algo="DE"
+                                        data-param="CR" value="0.9"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- jDE -->
+                    <div class="algo-item">
+                        <label class="checkbox-label">
+                            <input type="checkbox" class="algo-check" value="jDE" checked> jDE
+                        </label>
+                        <div class="algo-params" id="params-jDE">
+                            <div class="algo-params-header" onclick="toggleParams('jDE')">Parameters ▾</div>
+                            <div class="algo-params-content">
+                                <div class="form-group"><label>Pop Size</label><input type="number" data-algo="jDE"
+                                        data-param="pop_size" value="30"></div>
+                                <div class="form-group"><label>τ1</label><input type="number" step="0.1" data-algo="jDE"
+                                        data-param="tau1" value="0.1"></div>
+                                <div class="form-group"><label>τ2</label><input type="number" step="0.1" data-algo="jDE"
+                                        data-param="tau2" value="0.1"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- jDE-Adapted -->
+                    <div class="algo-item">
+                        <label class="checkbox-label">
+                            <input type="checkbox" class="algo-check" value="jDE-Adapted"> jDE-Adapted
+                        </label>
+                        <div class="algo-params" id="params-jDE-Adapted">
+                            <div class="algo-params-header" onclick="toggleParams('jDE-Adapted')">Parameters ▾</div>
+                            <div class="algo-params-content">
+                                <div class="form-group"><label>Pop Size</label><input type="number"
+                                        data-algo="jDE-Adapted" data-param="pop_size" value="50"></div>
+                                <div class="form-group"><label>τ1</label><input type="number" step="0.1"
+                                        data-algo="jDE-Adapted" data-param="tau1" value="0.1"></div>
+                                <div class="form-group"><label>τ2</label><input type="number" step="0.1"
+                                        data-algo="jDE-Adapted" data-param="tau2" value="0.1"></div>
+                                <div class="form-group"><label>p_current_to_best</label><input type="number" step="0.05"
+                                        data-algo="jDE-Adapted" data-param="p_current_to_best" value="0.1"></div>
+                                <div class="form-group"><label>ls_interval</label><input type="number"
+                                        data-algo="jDE-Adapted" data-param="ls_interval" value="30"></div>
+                                <div class="form-group"><label>ls_max_evals</label><input type="number"
+                                        data-algo="jDE-Adapted" data-param="ls_max_evals" value="10"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PSO -->
+                    <div class="algo-item">
+                        <label class="checkbox-label">
+                            <input type="checkbox" class="algo-check" value="PSO"> PSO
+                        </label>
+                        <div class="algo-params" id="params-PSO">
+                            <div class="algo-params-header" onclick="toggleParams('PSO')">Parameters ▾</div>
+                            <div class="algo-params-content">
+                                <div class="form-group"><label>Pop Size</label><input type="number" data-algo="PSO"
+                                        data-param="pop_size" value="30"></div>
+                                <div class="form-group"><label>c1</label><input type="number" step="0.1" data-algo="PSO"
+                                        data-param="c1" value="2.0"></div>
+                                <div class="form-group"><label>c2</label><input type="number" step="0.1" data-algo="PSO"
+                                        data-param="c2" value="2.0"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PSO-H -->
+                    <div class="algo-item">
+                        <label class="checkbox-label">
+                            <input type="checkbox" class="algo-check" value="PSO-H"> PSO-H
+                        </label>
+                        <div class="algo-params" id="params-PSO-H">
+                            <div class="algo-params-header" onclick="toggleParams('PSO-H')">Parameters ▾</div>
+                            <div class="algo-params-content">
+                                <div class="form-group"><label>Pop Size</label><input type="number" data-algo="PSO-H"
+                                        data-param="pop_size" value="30"></div>
+                                <div class="form-group"><label>c1</label><input type="number" step="0.1"
+                                        data-algo="PSO-H" data-param="c1" value="2.0"></div>
+                                <div class="form-group"><label>c2</label><input type="number" step="0.1"
+                                        data-algo="PSO-H" data-param="c2" value="2.0"></div>
+                                <div class="form-group"><label>p_mut</label><input type="number" step="0.05"
+                                        data-algo="PSO-H" data-param="p_mut" value="0.1"></div>
+                                <div class="form-group"><label>sigma</label><input type="number" step="0.1"
+                                        data-algo="PSO-H" data-param="sigma" value="1.0"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- GA -->
+                    <div class="algo-item">
+                        <label class="checkbox-label">
+                            <input type="checkbox" class="algo-check" value="GA"> GA
+                        </label>
+                        <div class="algo-params" id="params-GA">
+                            <div class="algo-params-header" onclick="toggleParams('GA')">Parameters ▾</div>
+                            <div class="algo-params-content">
+                                <div class="form-group"><label>Pop Size</label><input type="number" data-algo="GA"
+                                        data-param="pop_size" value="30"></div>
+                                <div class="form-group"><label>Mut Scale</label><input type="number" step="0.1"
+                                        data-algo="GA" data-param="mutation_scale" value="1.0"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- GSA -->
+                    <div class="algo-item">
+                        <label class="checkbox-label">
+                            <input type="checkbox" class="algo-check" value="GSA"> GSA
+                        </label>
+                        <div class="algo-params" id="params-GSA">
+                            <div class="algo-params-header" onclick="toggleParams('GSA')">Parameters ▾</div>
+                            <div class="algo-params-content">
+                                <div class="form-group"><label>Pop Size</label><input type="number" data-algo="GSA"
+                                        data-param="pop_size" value="30"></div>
+                                <div class="form-group"><label>G0</label><input type="number" step="1" data-algo="GSA"
+                                        data-param="G0" value="100"></div>
+                                <div class="form-group"><label>Alpha</label><input type="number" step="1"
+                                        data-algo="GSA" data-param="alpha" value="20"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ABC -->
+                    <div class="algo-item">
+                        <label class="checkbox-label">
+                            <input type="checkbox" class="algo-check" value="ABC"> ABC
+                        </label>
+                        <div class="algo-params" id="params-ABC">
+                            <div class="algo-params-header" onclick="toggleParams('ABC')">Parameters ▾</div>
+                            <div class="algo-params-content">
+                                <div class="form-group"><label>Pop Size</label><input type="number" data-algo="ABC"
+                                        data-param="pop_size" value="30"></div>
+                                <div class="form-group"><label>Limit</label><input type="number" data-algo="ABC"
+                                        data-param="limit" value="50"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn-primary" id="runBtn">Run Optimization</button>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+            <div id="results-area" style="display: none;">
+                <div class="tabs">
+                    <button class="tab-btn active" onclick="switchTab('convergence')">Convergence</button>
+                    <button class="tab-btn" onclick="switchTab('summary')">Summary</button>
+                    <button class="tab-btn" onclick="switchTab('details')">Details</button>
+                </div>
+
+                <!-- Tab 1: Convergence -->
+                <div id="tab-convergence" class="tab-content active">
+                    <div class="card">
+                        <div id="convergencePlot" style="width:100%; height:500px;"></div>
+                    </div>
+                    <div class="card" id="metrics-cards"
+                        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; background: transparent; border: none; padding: 0;">
+                        <!-- Metrics injected here -->
+                    </div>
+                </div>
+
+                <!-- Tab 2: Summary -->
+                <div id="tab-summary" class="tab-content">
+                    <div class="card">
+                        <h3>Performance Comparison</h3>
+                        <table id="summaryTable">
+                            <thead>
+                                <tr>
+                                    <th>Algorithm</th>
+                                    <th>Best Value</th>
+                                    <th>Evaluations</th>
+                                    <th>Time (s)</th>
+                                    <th>Pop Size</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                    <div class="card">
+                        <h3>🏆 Ranking</h3>
+                        <div id="rankingList"></div>
+                    </div>
+                </div>
+
+                <!-- Tab 3: Details -->
+                <div id="tab-details" class="tab-content">
+                    <div id="detailsList"></div>
+                </div>
+            </div>
+
+            <div id="welcome-message" class="hero-section">
+                <h2>🚀 Optimization Dashboard</h2>
+                <p>Compare cutting-edge metaheuristic algorithms on CEC2017 benchmark functions. Select your algorithms
+                    and parameters to begin the optimization journey.</p>
+            </div>
+        </main>
+    </div>
+
+    <div class="loading-overlay" id="loading">
+        <div class="spinner"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

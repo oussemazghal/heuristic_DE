@@ -17,6 +17,7 @@ The codebase includes implementations of:
 *   `basic_de_experiments.py`: (Formerly `AAAAA.py`) Contains basic implementations of DE and jDE algorithms with multithreaded execution for benchmarking.
 *   `fonctionnel.py`: A more comprehensive script including DE, PSO, ABC, GSA, and hybrid variants, featuring optimized batch evaluations and result plotting.
 *   `cec2017/`: Directory containing the CEC2017 benchmark functions.
+*   `site heuritsic/`: A web-based optimization dashboard for visualizing results.
 
 ## Running the Experiments
 
@@ -30,7 +31,37 @@ To run the comprehensive suite with plotting:
 python fonctionnel.py
 ```
 
-## Requirements
+## Web Interface (Optimization Dashboard)
+
+The repository includes a web dashboard to visualize and compare the algorithm performance.
+
+### Prerequisites
+*   Python 3.8+
+*   `pip`
+
+### Installation & Running
+
+1.  Navigate to the site directory:
+    ```bash
+    cd "site heuritsic"
+    ```
+
+2.  Install dependencies:
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+3.  Run the application:
+    ```bash
+    uvicorn backend.main:app --reload
+    ```
+
+4.  Open your browser and visit:
+    ```
+    http://127.0.0.1:8000
+    ```
+
+## Requirements for Scripts
 
 *   Python 3.x
 *   NumPy
